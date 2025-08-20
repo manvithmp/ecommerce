@@ -34,7 +34,7 @@ const products = [
         category: 'Electronics',
         stock: 10,
         brand: 'Apple',
-        image: 'https://via.placeholder.com/300x200/4CAF50/white?text=MacBook+Pro',
+        image: 'https://techcrunch.com/wp-content/uploads/2024/11/CMC_8144.jpg',
         tags: ['laptop', 'apple', 'macbook', 'm2'],
         isFeatured: true
     },
@@ -45,7 +45,7 @@ const products = [
         category: 'Electronics',
         stock: 25,
         brand: 'Apple',
-        image: 'https://via.placeholder.com/300x200/2196F3/white?text=iPhone+15',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZWm59SJ_1qUNH-5Ntyo18CUHwM8a3KBpsnA&s',
         tags: ['smartphone', 'apple', 'iphone', '5g']
     },
     {
@@ -55,7 +55,7 @@ const products = [
         category: 'Electronics',
         stock: 20,
         brand: 'Samsung',
-        image: 'https://via.placeholder.com/300x200/9C27B0/white?text=Galaxy+S24',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7-escqYR4YEimPLnlY3ptehddl4ap8w2QnQ&s',
         tags: ['smartphone', 'samsung', 'android', 's-pen']
     },
     {
@@ -65,7 +65,7 @@ const products = [
         category: 'Electronics',
         stock: 30,
         brand: 'Sony',
-        image: 'https://via.placeholder.com/300x200/FF9800/white?text=Sony+WH1000XM5',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiUijbJWDY9ibF6fzbIPmdPJXNGagZVqs6dg&s',
         tags: ['headphones', 'wireless', 'noise-canceling', 'sony']
     },
     {
@@ -75,7 +75,7 @@ const products = [
         category: 'Furniture',
         stock: 5,
         brand: 'Herman Miller',
-        image: 'https://via.placeholder.com/300x200/607D8B/white?text=Aeron+Chair',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiXVKhYwectG-YmYB4fjLtCyzO-RWO3ne8xA&s',
         tags: ['chair', 'office', 'ergonomic', 'herman-miller'],
         isFeatured: true
     },
@@ -86,7 +86,7 @@ const products = [
         category: 'Sports',
         stock: 40,
         brand: 'Nike',
-        image: 'https://via.placeholder.com/300x200/F44336/white?text=Air+Max+270',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHwcKucFdCHBzYpp_ULzvQfLpVlev4_Q9T2w&s',
         tags: ['shoes', 'running', 'nike', 'air-max']
     },
     {
@@ -96,7 +96,7 @@ const products = [
         category: 'Home',
         stock: 50,
         brand: 'HomeEssentials',
-        image: 'https://via.placeholder.com/300x200/4CAF50/white?text=Coffee+Mug+Set',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaH4yBoStFGo9kXQ2LTGSprCcr2b8ultkriA&s',
         tags: ['mug', 'ceramic', 'coffee', 'kitchen']
     },
     {
@@ -106,7 +106,7 @@ const products = [
         category: 'Books',
         stock: 25,
         brand: 'Penguin Classics',
-        image: 'https://via.placeholder.com/300x200/795548/white?text=Shakespeare',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuN4pxZfv7YVT3JTzNJKto5bKWg4Wb0zlrMQ&s',
         tags: ['book', 'literature', 'shakespeare', 'classic']
     },
     {
@@ -116,7 +116,7 @@ const products = [
         category: 'Clothing',
         stock: 100,
         brand: 'EcoWear',
-        image: 'https://via.placeholder.com/300x200/8BC34A/white?text=Organic+T-Shirt',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTttzWYo2rKtjNs6L8W7eSg1ujSYR34xfVeFQ&s',
         tags: ['t-shirt', 'organic', 'cotton', 'sustainable']
     },
     {
@@ -126,7 +126,7 @@ const products = [
         category: 'Beauty',
         stock: 75,
         brand: 'SkinCare Pro',
-        image: 'https://via.placeholder.com/300x200/E91E63/white?text=Vitamin+C+Serum',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROnRIeOIorD6fBHkRdlUGdrQnSB7bQqiERig&s',
         tags: ['serum', 'vitamin-c', 'skincare', 'anti-aging']
     }
 ];
