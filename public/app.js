@@ -227,6 +227,8 @@ const loadCart = async () => {
         updateCartUI();
     } catch (error) {
         console.error('Error loading cart:', error);
+        cart = { items: [], totalItems: 0, totalAmount: 0 };
+        updateCartUI();
     }
 };
 
@@ -303,7 +305,7 @@ const renderCartItems = () => {
     const container = document.getElementById('cartItems');
     if (!container) return;
     
-    if (!cart || !cart.items.length) {
+    if (!cart || !cart.items || cart.items.length === 0) {
         container.innerHTML = '<div class="no-data">Your cart is empty</div>';
         const summary = document.getElementById('cartSummary');
         if (summary) summary.innerHTML = '';
@@ -331,7 +333,7 @@ const renderCartItems = () => {
         </div>
     `).join('');
     
-    const subtotal = cart.totalAmount;
+    const subtotal = cart.totalAmount || 0;
     const shipping = subtotal > 1000 ? 0 : 50;
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const total = subtotal + shipping + tax;
@@ -341,7 +343,7 @@ const renderCartItems = () => {
         summary.innerHTML = `
             <div class="cart-summary-details">
                 <div class="summary-line">
-                    <span>Subtotal (${cart.totalItems} items):</span>
+                    <span>Subtotal (${cart.totalItems || 0} items):</span>
                     <span>₹${subtotal.toFixed(2)}</span>
                 </div>
                 <div class="summary-line">
@@ -379,6 +381,7 @@ const createOrder = async (orderData) => {
         
         cart = { items: [], totalItems: 0, totalAmount: 0 };
         updateCartUI();
+        renderCartItems();
     } catch (error) {
         showToast('Error placing order: ' + error.message, 'error');
     } finally {
@@ -395,6 +398,8 @@ const loadOrders = async () => {
         renderOrders(orders);
     } catch (error) {
         showToast('Error loading orders: ' + error.message, 'error');
+        const container = document.getElementById('ordersList');
+        if (container) container.innerHTML = '<div class="no-data">Error loading orders</div>';
     }
 };
 
@@ -402,7 +407,7 @@ const renderOrders = (orderList) => {
     const container = document.getElementById('ordersList');
     if (!container) return;
     
-    if (!orderList.length) {
+    if (!orderList || orderList.length === 0) {
         container.innerHTML = '<div class="no-data">No orders found</div>';
         return;
     }
@@ -422,7 +427,7 @@ const renderOrders = (orderList) => {
                 <div class="order-items">
                     ${order.items.slice(0, 3).map(item => `
                         <div class="order-item">
-                            <img src="${item.image}" alt="${item.name}">
+                            <img src="${item.image || 'https://picsum.photos/40/40?random=1'}" alt="${item.name}">
                             <span>${item.name} × ${item.quantity}</span>
                         </div>
                     `).join('')}
@@ -462,6 +467,8 @@ const loadAllOrders = async () => {
         renderAdminOrders(data.data);
     } catch (error) {
         showToast('Error loading orders: ' + error.message, 'error');
+        const container = document.getElementById('adminOrders');
+        if (container) container.innerHTML = '<div class="no-data">Error loading orders</div>';
     }
 };
 
@@ -491,6 +498,8 @@ const loadAdminProducts = async () => {
         renderAdminProducts(data.data);
     } catch (error) {
         console.error('Error loading admin products:', error);
+        const container = document.getElementById('adminProducts');
+        if (container) container.innerHTML = '<div class="no-data">Error loading products</div>';
     }
 };
 
@@ -498,9 +507,14 @@ const renderAdminProducts = (productList) => {
     const container = document.getElementById('adminProducts');
     if (!container) return;
     
+    if (!productList || productList.length === 0) {
+        container.innerHTML = '<div class="no-data">No products found</div>';
+        return;
+    }
+    
     container.innerHTML = productList.map(product => `
         <div class="admin-product-card">
-            <img src="${product.image}" alt="${product.name}">
+            <img src="${product.image}" alt="${product.name}" onerror="this.src='https://picsum.photos/80/80?random=1';">
             <div class="product-info">
                 <h4>${product.name}</h4>
                 <p>₹${product.price} | Stock: ${product.stock}</p>
@@ -531,7 +545,7 @@ const renderAdminOrders = (orderList) => {
     const container = document.getElementById('adminOrders');
     if (!container) return;
     
-    if (!orderList.length) {
+    if (!orderList || orderList.length === 0) {
         container.innerHTML = '<div class="no-data">No orders found</div>';
         return;
     }
@@ -543,9 +557,10 @@ const renderAdminOrders = (orderList) => {
                 <div class="order-status status--${order.orderStatus}">${order.orderStatus}</div>
             </div>
             <div class="order-details">
-                <p><strong>Customer:</strong> ${order.user.name} (${order.user.email})</p>
+                <p><strong>Customer:</strong> ${order.user ? order.user.name : 'Unknown'} (${order.user ? order.user.email : 'Unknown'})</p>
                 <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
                 <p><strong>Total:</strong> ₹${order.totalAmount.toFixed(2)}</p>
+                <p><strong>Items:</strong> ${order.totalItems}</p>
                 <div class="order-actions">
                     <select onchange="updateOrderStatus('${order._id}', this.value)" ${order.orderStatus === 'delivered' || order.orderStatus === 'cancelled' ? 'disabled' : ''}>
                         <option value="">Update Status</option>
@@ -599,6 +614,8 @@ const updateUI = () => {
         
         if (currentUser.role === 'admin' && adminTab) {
             adminTab.classList.remove('hidden');
+        } else if (adminTab) {
+            adminTab.classList.add('hidden');
         }
     } else {
         if (authButtons) authButtons.classList.remove('hidden');
@@ -612,7 +629,7 @@ const updateUI = () => {
 };
 
 const updateCartUI = () => {
-    const count = cart ? cart.totalItems : 0;
+    const count = cart ? (cart.totalItems || 0) : 0;
     const cartCount = document.getElementById('cartCount');
     if (cartCount) cartCount.textContent = count;
     
@@ -631,10 +648,13 @@ const switchTab = (tabName) => {
         if (targetNavTab) targetNavTab.classList.add('active');
         
         document.querySelectorAll('.tab-pane').forEach(pane => {
-            if (pane) pane.classList.add('hidden');
+            if (pane) {
+                pane.classList.add('hidden');
+                pane.classList.remove('active');
+            }
         });
         
-        const targetPane = document.getElementById(`${tabName}Tab`);
+        const targetPane = document.getElementById(tabName);
         if (targetPane) {
             targetPane.classList.remove('hidden');
             targetPane.classList.add('active');
@@ -679,12 +699,12 @@ const closeModal = (modalId) => {
 };
 
 const openCheckout = () => {
-    if (!cart || !cart.items.length) {
+    if (!cart || !cart.items || cart.items.length === 0) {
         showToast('Your cart is empty', 'warning');
         return;
     }
     
-    const subtotal = cart.totalAmount;
+    const subtotal = cart.totalAmount || 0;
     const shipping = subtotal > 1000 ? 0 : 50;
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const total = subtotal + shipping + tax;
@@ -694,7 +714,7 @@ const openCheckout = () => {
         summary.innerHTML = `
             <h3>Order Summary</h3>
             <div class="summary-line">
-                <span>Subtotal (${cart.totalItems} items):</span>
+                <span>Subtotal (${cart.totalItems || 0} items):</span>
                 <span>₹${subtotal.toFixed(2)}</span>
             </div>
             <div class="summary-line">
@@ -749,13 +769,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (registerBtn) registerBtn.addEventListener('click', () => openModal('registerModal'));
     if (logoutBtn) logoutBtn.addEventListener('click', logout);
     
-    document.querySelectorAll('.modal-close').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const modal = e.target.closest('.modal');
-            if (modal) modal.classList.add('hidden');
-        });
-    });
-    
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -788,7 +801,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 price: parseFloat(document.getElementById('productPrice')?.value),
                 category: document.getElementById('productCategory')?.value,
                 stock: parseInt(document.getElementById('productStock')?.value),
-                image: document.getElementById('productImage')?.value
+                image: document.getElementById('productImage')?.value || 'https://picsum.photos/300/200?random=1'
             };
             if (formData.name && formData.description && formData.price && formData.category && formData.stock !== undefined) {
                 await addProduct(formData);
