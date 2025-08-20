@@ -6,21 +6,14 @@ let products = [];
 let cart = null;
 let orders = [];
 
-const authButtons = document.getElementById('authButtons');
-const userInfo = document.getElementById('userInfo');
-const userName = document.getElementById('userName');
-const userRole = document.getElementById('userRole');
-const cartTab = document.getElementById('cartTab');
-const ordersTab = document.getElementById('ordersTab');
-const adminTab = document.getElementById('adminTab');
-const cartCount = document.getElementById('cartCount');
-
 const showLoading = () => {
-    document.getElementById('loading').classList.remove('hidden');
+    const loading = document.getElementById('loading');
+    if (loading) loading.classList.remove('hidden');
 };
 
 const hideLoading = () => {
-    document.getElementById('loading').classList.add('hidden');
+    const loading = document.getElementById('loading');
+    if (loading) loading.classList.add('hidden');
 };
 
 const showToast = (message, type = 'info') => {
@@ -30,13 +23,15 @@ const showToast = (message, type = 'info') => {
         <span>${message}</span>
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
-    document.getElementById('toastContainer').appendChild(toast);
-    
-    setTimeout(() => {
-        if (toast.parentElement) {
-            toast.remove();
-        }
-    }, 5000);
+    const container = document.getElementById('toastContainer');
+    if (container) {
+        container.appendChild(toast);
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 5000);
+    }
 };
 
 const getAuthToken = () => {
@@ -162,6 +157,7 @@ const loadProducts = async (page = 1, search = '', category = '') => {
 
 const renderProducts = (productList) => {
     const grid = document.getElementById('productsGrid');
+    if (!grid) return;
     
     if (!productList.length) {
         grid.innerHTML = '<div class="no-data">No products found</div>';
@@ -199,6 +195,7 @@ const renderProducts = (productList) => {
 
 const renderPagination = (pagination) => {
     const container = document.getElementById('productsPagination');
+    if (!container) return;
     
     if (pagination.pages <= 1) {
         container.classList.add('hidden');
@@ -304,10 +301,12 @@ const clearCart = async () => {
 
 const renderCartItems = () => {
     const container = document.getElementById('cartItems');
+    if (!container) return;
     
     if (!cart || !cart.items.length) {
         container.innerHTML = '<div class="no-data">Your cart is empty</div>';
-        document.getElementById('cartSummary').innerHTML = '';
+        const summary = document.getElementById('cartSummary');
+        if (summary) summary.innerHTML = '';
         return;
     }
     
@@ -337,29 +336,32 @@ const renderCartItems = () => {
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const total = subtotal + shipping + tax;
     
-    document.getElementById('cartSummary').innerHTML = `
-        <div class="cart-summary-details">
-            <div class="summary-line">
-                <span>Subtotal (${cart.totalItems} items):</span>
-                <span>₹${subtotal.toFixed(2)}</span>
+    const summary = document.getElementById('cartSummary');
+    if (summary) {
+        summary.innerHTML = `
+            <div class="cart-summary-details">
+                <div class="summary-line">
+                    <span>Subtotal (${cart.totalItems} items):</span>
+                    <span>₹${subtotal.toFixed(2)}</span>
+                </div>
+                <div class="summary-line">
+                    <span>Shipping:</span>
+                    <span>${shipping === 0 ? 'Free' : '₹' + shipping.toFixed(2)}</span>
+                </div>
+                <div class="summary-line">
+                    <span>Tax (18%):</span>
+                    <span>₹${tax.toFixed(2)}</span>
+                </div>
+                <div class="summary-line total">
+                    <span><strong>Total:</strong></span>
+                    <span><strong>₹${total.toFixed(2)}</strong></span>
+                </div>
+                <div class="cart-actions">
+                    <button class="btn btn--primary btn--large" onclick="openCheckout()">Proceed to Checkout</button>
+                </div>
             </div>
-            <div class="summary-line">
-                <span>Shipping:</span>
-                <span>${shipping === 0 ? 'Free' : '₹' + shipping.toFixed(2)}</span>
-            </div>
-            <div class="summary-line">
-                <span>Tax (18%):</span>
-                <span>₹${tax.toFixed(2)}</span>
-            </div>
-            <div class="summary-line total">
-                <span><strong>Total:</strong></span>
-                <span><strong>₹${total.toFixed(2)}</strong></span>
-            </div>
-            <div class="cart-actions">
-                <button class="btn btn--primary btn--large" onclick="openCheckout()">Proceed to Checkout</button>
-            </div>
-        </div>
-    `;
+        `;
+    }
 };
 
 const createOrder = async (orderData) => {
@@ -398,6 +400,7 @@ const loadOrders = async () => {
 
 const renderOrders = (orderList) => {
     const container = document.getElementById('ordersList');
+    if (!container) return;
     
     if (!orderList.length) {
         container.innerHTML = '<div class="no-data">No orders found</div>';
@@ -470,7 +473,8 @@ const addProduct = async (productData) => {
             body: JSON.stringify(productData)
         });
         
-        document.getElementById('addProductForm').reset();
+        const form = document.getElementById('addProductForm');
+        if (form) form.reset();
         await loadProducts();
         await loadAdminProducts();
         showToast('Product added successfully!', 'success');
@@ -492,6 +496,7 @@ const loadAdminProducts = async () => {
 
 const renderAdminProducts = (productList) => {
     const container = document.getElementById('adminProducts');
+    if (!container) return;
     
     container.innerHTML = productList.map(product => `
         <div class="admin-product-card">
@@ -524,6 +529,7 @@ const deleteProduct = async (productId) => {
 
 const renderAdminOrders = (orderList) => {
     const container = document.getElementById('adminOrders');
+    if (!container) return;
     
     if (!orderList.length) {
         container.innerHTML = '<div class="no-data">No orders found</div>';
@@ -571,25 +577,35 @@ const updateOrderStatus = async (orderId, status) => {
 };
 
 const updateUI = () => {
+    const authButtons = document.getElementById('authButtons');
+    const userInfo = document.getElementById('userInfo');
+    const userName = document.getElementById('userName');
+    const userRole = document.getElementById('userRole');
+    const cartTab = document.getElementById('cartTab');
+    const ordersTab = document.getElementById('ordersTab');
+    const adminTab = document.getElementById('adminTab');
+    
     if (currentUser) {
-        authButtons.classList.add('hidden');
-        userInfo.classList.remove('hidden');
-        userName.textContent = currentUser.name;
-        userRole.textContent = `(${currentUser.role})`;
-        userRole.className = `user-role role--${currentUser.role}`;
+        if (authButtons) authButtons.classList.add('hidden');
+        if (userInfo) userInfo.classList.remove('hidden');
+        if (userName) userName.textContent = currentUser.name;
+        if (userRole) {
+            userRole.textContent = `(${currentUser.role})`;
+            userRole.className = `user-role role--${currentUser.role}`;
+        }
         
-        cartTab.classList.remove('hidden');
-        ordersTab.classList.remove('hidden');
+        if (cartTab) cartTab.classList.remove('hidden');
+        if (ordersTab) ordersTab.classList.remove('hidden');
         
-        if (currentUser.role === 'admin') {
+        if (currentUser.role === 'admin' && adminTab) {
             adminTab.classList.remove('hidden');
         }
     } else {
-        authButtons.classList.remove('hidden');
-        userInfo.classList.add('hidden');
-        cartTab.classList.add('hidden');
-        ordersTab.classList.add('hidden');
-        adminTab.classList.add('hidden');
+        if (authButtons) authButtons.classList.remove('hidden');
+        if (userInfo) userInfo.classList.add('hidden');
+        if (cartTab) cartTab.classList.add('hidden');
+        if (ordersTab) ordersTab.classList.add('hidden');
+        if (adminTab) adminTab.classList.add('hidden');
     }
     
     updateCartUI();
@@ -597,7 +613,8 @@ const updateUI = () => {
 
 const updateCartUI = () => {
     const count = cart ? cart.totalItems : 0;
-    cartCount.textContent = count;
+    const cartCount = document.getElementById('cartCount');
+    if (cartCount) cartCount.textContent = count;
     
     if (currentTab === 'cart') {
         renderCartItems();
@@ -607,35 +624,20 @@ const updateCartUI = () => {
 const switchTab = (tabName) => {
     try {
         document.querySelectorAll('.nav-tab').forEach(tab => {
-            if (tab && tab.classList) {
-                tab.classList.remove('active');
-            }
+            if (tab) tab.classList.remove('active');
         });
         
         const targetNavTab = document.querySelector(`[data-tab="${tabName}"]`);
-        if (targetNavTab && targetNavTab.classList) {
-            targetNavTab.classList.add('active');
-        }
+        if (targetNavTab) targetNavTab.classList.add('active');
         
         document.querySelectorAll('.tab-pane').forEach(pane => {
-            if (pane && pane.classList) {
-                pane.classList.add('hidden');
-            }
+            if (pane) pane.classList.add('hidden');
         });
         
-        const possibleIds = [
-            `${tabName}Tab`,
-            `${tabName}TabContent`
-        ];
-        
-        let targetPane = null;
-        for (const id of possibleIds) {
-            targetPane = document.getElementById(id);
-            if (targetPane) break;
-        }
-        
-        if (targetPane && targetPane.classList) {
+        const targetPane = document.getElementById(`${tabName}Tab`);
+        if (targetPane) {
             targetPane.classList.remove('hidden');
+            targetPane.classList.add('active');
         }
         
         currentTab = tabName;
@@ -667,11 +669,13 @@ const switchTab = (tabName) => {
 };
 
 const openModal = (modalId) => {
-    document.getElementById(modalId).classList.remove('hidden');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('hidden');
 };
 
 const closeModal = (modalId) => {
-    document.getElementById(modalId).classList.add('hidden');
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
 };
 
 const openCheckout = () => {
@@ -685,25 +689,28 @@ const openCheckout = () => {
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const total = subtotal + shipping + tax;
     
-    document.getElementById('checkoutSummary').innerHTML = `
-        <h3>Order Summary</h3>
-        <div class="summary-line">
-            <span>Subtotal (${cart.totalItems} items):</span>
-            <span>₹${subtotal.toFixed(2)}</span>
-        </div>
-        <div class="summary-line">
-            <span>Shipping:</span>
-            <span>${shipping === 0 ? 'Free' : '₹' + shipping.toFixed(2)}</span>
-        </div>
-        <div class="summary-line">
-            <span>Tax (18%):</span>
-            <span>₹${tax.toFixed(2)}</span>
-        </div>
-        <div class="summary-line total">
-            <span><strong>Total:</strong></span>
-            <span><strong>₹${total.toFixed(2)}</strong></span>
-        </div>
-    `;
+    const summary = document.getElementById('checkoutSummary');
+    if (summary) {
+        summary.innerHTML = `
+            <h3>Order Summary</h3>
+            <div class="summary-line">
+                <span>Subtotal (${cart.totalItems} items):</span>
+                <span>₹${subtotal.toFixed(2)}</span>
+            </div>
+            <div class="summary-line">
+                <span>Shipping:</span>
+                <span>${shipping === 0 ? 'Free' : '₹' + shipping.toFixed(2)}</span>
+            </div>
+            <div class="summary-line">
+                <span>Tax (18%):</span>
+                <span>₹${tax.toFixed(2)}</span>
+            </div>
+            <div class="summary-line total">
+                <span><strong>Total:</strong></span>
+                <span><strong>₹${total.toFixed(2)}</strong></span>
+            </div>
+        `;
+    }
     
     openModal('checkoutModal');
 };
@@ -729,85 +736,116 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     document.querySelectorAll('.nav-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
-            switchTab(e.target.dataset.tab);
+            const tabName = e.target.dataset.tab;
+            if (tabName) switchTab(tabName);
         });
     });
     
-    document.getElementById('loginBtn').addEventListener('click', () => openModal('loginModal'));
-    document.getElementById('registerBtn').addEventListener('click', () => openModal('registerModal'));
-    document.getElementById('logoutBtn').addEventListener('click', logout);
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (loginBtn) loginBtn.addEventListener('click', () => openModal('loginModal'));
+    if (registerBtn) registerBtn.addEventListener('click', () => openModal('registerModal'));
+    if (logoutBtn) logoutBtn.addEventListener('click', logout);
     
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const modal = e.target.closest('.modal');
-            modal.classList.add('hidden');
+            if (modal) modal.classList.add('hidden');
         });
     });
     
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        await login(email, password);
-    });
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail')?.value;
+            const password = document.getElementById('loginPassword')?.value;
+            if (email && password) await login(email, password);
+        });
+    }
     
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('registerName').value;
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const role = document.getElementById('registerRole').value;
-        await register(name, email, password, role);
-    });
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('registerName')?.value;
+            const email = document.getElementById('registerEmail')?.value;
+            const password = document.getElementById('registerPassword')?.value;
+            const role = document.getElementById('registerRole')?.value;
+            if (name && email && password) await register(name, email, password, role);
+        });
+    }
     
-    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const formData = {
-            name: document.getElementById('productName').value,
-            description: document.getElementById('productDescription').value,
-            price: parseFloat(document.getElementById('productPrice').value),
-            category: document.getElementById('productCategory').value,
-            stock: parseInt(document.getElementById('productStock').value),
-            image: document.getElementById('productImage').value
-        };
-        await addProduct(formData);
-    });
+    const addProductForm = document.getElementById('addProductForm');
+    if (addProductForm) {
+        addProductForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('productName')?.value,
+                description: document.getElementById('productDescription')?.value,
+                price: parseFloat(document.getElementById('productPrice')?.value),
+                category: document.getElementById('productCategory')?.value,
+                stock: parseInt(document.getElementById('productStock')?.value),
+                image: document.getElementById('productImage')?.value
+            };
+            if (formData.name && formData.description && formData.price && formData.category && formData.stock !== undefined) {
+                await addProduct(formData);
+            }
+        });
+    }
     
-    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const orderData = {
-            shippingAddress: {
-                street: document.getElementById('shippingStreet').value,
-                city: document.getElementById('shippingCity').value,
-                state: document.getElementById('shippingState').value,
-                postalCode: document.getElementById('shippingPostalCode').value,
-                country: document.getElementById('shippingCountry').value
-            },
-            paymentMethod: document.getElementById('paymentMethod').value,
-            notes: document.getElementById('orderNotes').value
-        };
-        await createOrder(orderData);
-    });
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const orderData = {
+                shippingAddress: {
+                    street: document.getElementById('shippingStreet')?.value,
+                    city: document.getElementById('shippingCity')?.value,
+                    state: document.getElementById('shippingState')?.value,
+                    postalCode: document.getElementById('shippingPostalCode')?.value,
+                    country: document.getElementById('shippingCountry')?.value
+                },
+                paymentMethod: document.getElementById('paymentMethod')?.value,
+                notes: document.getElementById('orderNotes')?.value
+            };
+            await createOrder(orderData);
+        });
+    }
     
-    document.getElementById('searchBtn').addEventListener('click', () => {
-        const search = document.getElementById('searchInput').value;
-        const category = document.getElementById('categoryFilter').value;
-        loadProducts(1, search, category);
-    });
-    
-    document.getElementById('searchInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const search = e.target.value;
-            const category = document.getElementById('categoryFilter').value;
+    const searchBtn = document.getElementById('searchBtn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', () => {
+            const search = document.getElementById('searchInput')?.value || '';
+            const category = document.getElementById('categoryFilter')?.value || '';
             loadProducts(1, search, category);
-        }
-    });
+        });
+    }
     
-    document.getElementById('categoryFilter').addEventListener('change', (e) => {
-        const search = document.getElementById('searchInput').value;
-        const category = e.target.value;
-        loadProducts(1, search, category);
-    });
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const search = e.target.value;
+                const category = document.getElementById('categoryFilter')?.value || '';
+                loadProducts(1, search, category);
+            }
+        });
+    }
     
-    document.getElementById('clearCartBtn').addEventListener('click', clearCart);
+    const categoryFilter = document.getElementById('categoryFilter');
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', (e) => {
+            const search = document.getElementById('searchInput')?.value || '';
+            const category = e.target.value;
+            loadProducts(1, search, category);
+        });
+    }
+    
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    if (clearCartBtn) {
+        clearCartBtn.addEventListener('click', clearCart);
+    }
 });
