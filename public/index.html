@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce API</title>
+    <title>E-commerce API Demo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -116,8 +116,10 @@
                         </select>
                     </div>
                 </div>
-                <div class="products-grid" id="productsGrid"></div>
-                <div class="pagination hidden" id="productsPagination"></div>
+                <div class="products-grid" id="productsGrid">
+                </div>
+                <div class="pagination hidden" id="productsPagination">
+                </div>
             </div>
 
             <div class="tab-pane hidden" id="cartTabContent">
@@ -125,13 +127,16 @@
                     <h2>Shopping Cart</h2>
                     <button id="clearCartBtn" class="btn btn--outline btn--sm">Clear Cart</button>
                 </div>
-                <div class="cart-items" id="cartItems"></div>
-                <div class="cart-summary" id="cartSummary"></div>
+                <div class="cart-items" id="cartItems">
+                </div>
+                <div class="cart-summary" id="cartSummary">
+                </div>
             </div>
 
             <div class="tab-pane hidden" id="ordersTabContent">
                 <h2>Order History</h2>
-                <div class="orders-list" id="ordersList"></div>
+                <div class="orders-list" id="ordersList">
+                </div>
             </div>
 
             <div class="tab-pane hidden" id="adminTabContent">
@@ -186,12 +191,14 @@
 
                     <div class="admin-section">
                         <h3>Manage Products</h3>
-                        <div class="admin-products" id="adminProducts"></div>
+                        <div class="admin-products" id="adminProducts">
+                        </div>
                     </div>
 
                     <div class="admin-section">
                         <h3>All Orders</h3>
-                        <div class="admin-orders" id="adminOrders"></div>
+                        <div class="admin-orders" id="adminOrders">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -243,7 +250,8 @@
                         <label for="orderNotes">Notes (Optional)</label>
                         <textarea id="orderNotes" placeholder="Any special instructions..."></textarea>
                     </div>
-                    <div class="checkout-summary" id="checkoutSummary"></div>
+                    <div class="checkout-summary" id="checkoutSummary">
+                    </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn--primary btn--large">Place Order</button>
                     </div>
@@ -256,7 +264,8 @@
             <p>Loading...</p>
         </div>
 
-        <div class="toast-container" id="toastContainer"></div>
+        <div class="toast-container" id="toastContainer">
+        </div>
     </main>
 
     <script src="app.js"></script>

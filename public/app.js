@@ -170,7 +170,11 @@ const renderProducts = (productList) => {
     
     grid.innerHTML = productList.map(product => `
         <div class="product-card" data-id="${product._id}">
-            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <img src="${product.image}" 
+                 alt="${product.name}" 
+                 class="product-image"
+                 onerror="this.src='https://picsum.photos/300/200?random=${Math.floor(Math.random()*1000)}'; this.onerror=null;"
+                 loading="lazy">
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
                 <p class="product-description">${product.description.substring(0, 100)}...</p>
@@ -309,7 +313,11 @@ const renderCartItems = () => {
     
     container.innerHTML = cart.items.map(item => `
         <div class="cart-item" data-id="${item._id}">
-            <img src="${item.product.image}" alt="${item.product.name}" class="cart-item-image">
+            <img src="${item.product.image}" 
+                 alt="${item.product.name}" 
+                 class="cart-item-image"
+                 onerror="this.src='https://picsum.photos/80/80?random=${Math.floor(Math.random()*1000)}'; this.onerror=null;"
+                 loading="lazy">
             <div class="cart-item-info">
                 <h4>${item.product.name}</h4>
                 <p>₹${item.price.toFixed(2)} each</p>
@@ -597,38 +605,64 @@ const updateCartUI = () => {
 };
 
 const switchTab = (tabName) => {
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-    
-    document.querySelectorAll('.tab-pane').forEach(pane => {
-        pane.classList.add('hidden');
-    });
-    
-    const targetPane = document.getElementById(`${tabName}Tab`) || document.getElementById(`${tabName}TabContent`);
-    if (targetPane) {
-        targetPane.classList.remove('hidden');
-    }
-    
-    currentTab = tabName;
-    
-    switch (tabName) {
-        case 'products':
-            loadProducts();
-            break;
-        case 'cart':
-            renderCartItems();
-            break;
-        case 'orders':
-            loadOrders();
-            break;
-        case 'admin':
-            if (currentUser && currentUser.role === 'admin') {
-                loadAdminProducts();
-                loadAllOrders();
+    try {
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            if (tab && tab.classList) {
+                tab.classList.remove('active');
             }
-            break;
+        });
+        
+        const targetNavTab = document.querySelector(`[data-tab="${tabName}"]`);
+        if (targetNavTab && targetNavTab.classList) {
+            targetNavTab.classList.add('active');
+        }
+        
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            if (pane && pane.classList) {
+                pane.classList.add('hidden');
+            }
+        });
+        
+        const possibleIds = [
+            `${tabName}Tab`,
+            `${tabName}TabContent`
+        ];
+        
+        let targetPane = null;
+        for (const id of possibleIds) {
+            targetPane = document.getElementById(id);
+            if (targetPane) break;
+        }
+        
+        if (targetPane && targetPane.classList) {
+            targetPane.classList.remove('hidden');
+        }
+        
+        currentTab = tabName;
+        
+        switch (tabName) {
+            case 'products':
+                loadProducts();
+                break;
+            case 'cart':
+                if (currentUser) {
+                    renderCartItems();
+                }
+                break;
+            case 'orders':
+                if (currentUser) {
+                    loadOrders();
+                }
+                break;
+            case 'admin':
+                if (currentUser && currentUser.role === 'admin') {
+                    loadAdminProducts();
+                    loadAllOrders();
+                }
+                break;
+        }
+    } catch (error) {
+        console.error('Error in switchTab:', error);
     }
 };
 
